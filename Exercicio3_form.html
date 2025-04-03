@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width", initial-scale="1.0">
+        <title>Exercicio 3 - Formulario</title>
+    </head>
+    <body>
+        <form>
+            <table border="1">
+                <tr>
+                    <td><label for="nome">Nome:</label></td>
+                    <td><input type="text" id="nome" name="nome" required></td>
+                </tr>
+                <tr>
+                    <td><label for="email">E-mail</label></td>
+                    <td><input type="email" id="email" name="E-mail" required></td>
+                </tr>
+                <tr>
+                    <td>Avaliação</td>
+                    <td>
+                        <input type="radio" name="rating" value="1">🌟<br>
+                        <input type="radio" name="rating" value="2">🌟🌟<br>
+                        <input type="radio" name="rating" value="3">🌟🌟🌟<br>
+                        <input type="radio" name="rating" value="4">🌟🌟🌟🌟<br>
+                        <input type="radio" name="rating" value="5">🌟🌟🌟🌟🌟<br>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="comentario">Comentario:</label></td>
+                    <td><textarea id="comentario" name="comentario"></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: center;">
+                        <button type="reset">Limpar Feedback</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
