@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width", initial-scale="1.0">
+    <title>Exercicio 2 Formulario</title>
+</html>
+<body>
+    <h1>Formulario de pedido</h1>
+    <form>
+        <table border="1">
+            <tr>
+                <td><label for="nome">Nome do cliente:</label></td>
+                <td><input type="text" id="nome" name="nome"></td>
+            </tr>
+            <tr>
+                <td><label for="email">E-mail:</label></td>
+                <td><input type="email" id="email" name="email"></td>
+            </tr>
+            <tr>
+                <td><label for="Telefone">Telefone:</label></td>
+                <td><input type="number" id="Telefone" name="Telefone"></td>
+            </tr>
+            <tr>
+                <td><label for="produto">Produto:</label></td>
+                <td>
+                    <select id="produto" name="produto">
+                        <option value="computador">Computador</option>
+                        <option value="celular">Celular</option>
+                        <option value="tablet">Tablet</option>
+                    </select>    
+                </td>
+            </tr>
+            <tr>
+                <td>Forma de pagamento</td>
+                <td>
+                    <label for="cartao">Cartão</label>
+                    <input type="radio" id="cartao" name="pagamento" value="cartao" required>
+                    <label for="boleto">boleto:</label>
+                    <input type="radio" id="boleto" name="pagamento" value="boleto" required>
+                    <label for="pix">PIX</label>
+                    <input type="radio" id="pix" name="pagamento" value="pix" required>
+            </tr>
+            <tr>
+                <td><label for="observacao">Observação:</label></td>
+                <td><textarea id="observacao" name="observacao"></textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <button type="button">Enviar pedido</button> 
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
