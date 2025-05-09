@@ -1,0 +1,197 @@
+import { useState, useEffect } from 'react';
+
+export default function SemaforoAvancado() {
+  const [estadoPedestre, setEstadoPedestre] = useState('verde');
+  const [estadoCarro, setEstadoCarro] = useState('vermelho');
+  const [sensorPedestre, setSensorPedestre] = useState(false);
+  const [sensorCarro, setSensorCarro] = useState(false);
+  const [tempoPassagem, setTempoPassagem] = useState(0);
+  const [tempoIntervalo, setTempoIntervalo] = useState(0);
+  const [tempo, setTempo] = useState(0);
+  const [executando, setExecutando] = useState(true);
+  const [emTransicao, setEmTransicao] = useState(false);
+  const [modoSemaforo, setModoSemaforo] = useState('pedestres'); // pedestres, carros, intervalo
+  const [sensorAtivo, setSensorAtivo] = useState(true);
+  const [mensagem, setMensagem] = useState('Semáforo aberto para pedestres');
+  
+  useEffect(() => {
+    let intervalo;
+    if (executando) {
+      intervalo = setInterval(() => {
+        setTempo(prevTempo => prevTempo + 1);
+        
+        // Lógica baseada no modo atual do semáforo
+        switch (modoSemaforo) {
+          case 'pedestres':
+            if (tempoPassagem === 0) {
+              setTempoPassagem(tempo);
+              setMensagem('Semáforo aberto para pedestres (30s)');
+            }
+            
+            // Verifica se passou os 30 segundos para pedestres
+            if (tempo - tempoPassagem >= 30) {
+              if (!emTransicao) {
+                setEmTransicao(true);
+                setEstadoCarro('amarelo');
+                setMensagem('Transição: fechando para pedestres');
+                
+                setTimeout(() => {
+                  setEstadoCarro('verde');
+                  setEstadoPedestre('vermelho');
+                  setEmTransicao(false);
+                  setModoSemaforo('carros');
+                  setTempoPassagem(0);
+                  setTempoIntervalo(tempo);
+                  setMensagem('Semáforo aberto para carros');
+                  setSensorAtivo(false);
+                }, 3000);
+              }
+            }
+            break;
+            
+          case 'carros':
+            // Verifica se já passou o intervalo de 20 segundos
+            if (tempo - tempoIntervalo >= 20) {
+              setSensorAtivo(true);
+              setMensagem('Sensores reativados, aguardando pedestres');
+              
+              // Se detectar pedestre após o intervalo, muda o semáforo
+              if (sensorPedestre && sensorAtivo) {
+                if (!emTransicao) {
+                  setEmTransicao(true);
+                  setEstadoCarro('amarelo');
+                  setMensagem('Transição: abrindo para pedestres');
+                  
+                  setTimeout(() => {
+                    setEstadoCarro('vermelho');
+                    setEstadoPedestre('verde');
+                    setEmTransicao(false);
+                    setModoSemaforo('pedestres');
+                    setTempoPassagem(0);
+                    setMensagem('Semáforo aberto para pedestres');
+                  }, 3000);
+                }
+              }
+            } else {
+              setMensagem(`Intervalo: aguardando ${20 - (tempo - tempoIntervalo)}s para reativar sensores`);
+            }
+            break;
+        }
+      }, 1000);
+    }
+    return () => clearInterval(intervalo);
+  }, [executando, tempo, modoSemaforo, tempoPassagem, tempoIntervalo, emTransicao, sensorPedestre, sensorAtivo]);
+
+  return (
+    <div className="flex flex-col items-center bg-gray-100 p-6 rounded-lg w-full">
+      <h2 className="text-xl font-bold mb-4">Semáforo com Ciclo Temporizado</h2>
+      
+      <div className="flex justify-between w-full mb-6 max-w-lg">
+        <div className="flex flex-col items-center">
+          <div className="text-center font-bold mb-2">Semáforo para Carros</div>
+          <div className="flex flex-col bg-gray-800 p-3 rounded-lg">
+            <div className={`w-12 h-12 rounded-full ${estadoCarro === 'verde' ? 'bg-green-500' : 'bg-gray-500'} mb-2`}></div>
+            <div className={`w-12 h-12 rounded-full ${estadoCarro === 'amarelo' ? 'bg-yellow-500' : 'bg-gray-500'} mb-2`}></div>
+            <div className={`w-12 h-12 rounded-full ${estadoCarro === 'vermelho' ? 'bg-red-500' : 'bg-gray-500'}`}></div>
+          </div>
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <div className="text-center font-bold mb-2">Semáforo para Pedestres</div>
+          <div className="flex flex-col bg-gray-800 p-3 rounded-lg">
+            <div className={`w-12 h-12 rounded-full ${estadoPedestre === 'verde' ? 'bg-green-500' : 'bg-gray-500'} mb-2`}></div>
+            <div className={`w-12 h-12 rounded-full ${estadoPedestre === 'vermelho' ? 'bg-red-500' : 'bg-gray-500'}`}></div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex flex-col gap-4 w-full max-w-lg">
+        <div className="bg-white p-4 rounded-lg shadow text-center">
+          <div className="font-bold mb-2">Status do Sistema</div>
+          <div className={`text-lg ${emTransicao ? 'text-yellow-600' : modoSemaforo === 'pedestres' ? 'text-green-600' : 'text-blue-600'}`}>
+            {mensagem}
+          </div>
+        </div>
+      
+        <div className="flex justify-between gap-4">
+          <div className="bg-white p-4 rounded-lg shadow flex-1">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">Sensor Carro:</span>
+              <label className="inline-flex items-center cursor-pointer">
+                <input type="checkbox" 
+                  className="sr-only peer"
+                  checked={sensorCarro}
+                  onChange={() => setSensorCarro(!sensorCarro)} />
+                <div className={`w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 relative`}></div>
+              </label>
+            </div>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg shadow flex-1">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">Sensor Pedestre:</span>
+              <label className="inline-flex items-center cursor-pointer">
+                <input type="checkbox" 
+                  className="sr-only peer"
+                  disabled={!sensorAtivo}
+                  checked={sensorPedestre}
+                  onChange={() => setSensorPedestre(!sensorPedestre)} />
+                <div className={`w-11 h-6 ${sensorAtivo ? 'bg-gray-200' : 'bg-gray-300'} rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${sensorAtivo ? 'peer-checked:bg-blue-600' : ''} relative`}></div>
+              </label>
+              {!sensorAtivo && <div className="text-xs text-red-500 mt-1">Sensor desativado</div>}
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex gap-4">
+          <div className="bg-white p-4 rounded-lg shadow flex-1">
+            <div className="mb-2">
+              <span className="font-medium">Tempo de passagem:</span> {modoSemaforo === 'pedestres' && tempoPassagem > 0 ? `${tempo - tempoPassagem}/30s` : '-'}
+            </div>
+            {modoSemaforo === 'pedestres' && tempoPassagem > 0 && (
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div 
+                  className="bg-green-600 h-2.5 rounded-full" 
+                  style={{ width: `${Math.min(((tempo - tempoPassagem) / 30) * 100, 100)}%` }}>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg shadow flex-1">
+            <div className="mb-2">
+              <span className="font-medium">Intervalo após ciclo:</span> {modoSemaforo === 'carros' && tempoIntervalo > 0 ? `${tempo - tempoIntervalo}/20s` : '-'}
+            </div>
+            {modoSemaforo === 'carros' && tempoIntervalo > 0 && (
+              <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div 
+                  className="bg-blue-600 h-2.5 rounded-full" 
+                  style={{ width: `${Math.min(((tempo - tempoIntervalo) / 20) * 100, 100)}%` }}>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <button
+          onClick={() => setExecutando(!executando)}
+          className={`p-2 rounded-lg ${executando ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>
+          {executando ? 'Pausar' : 'Continuar'} Simulação
+        </button>
+      </div>
+      
+      <div className="mt-4 p-4 bg-blue-50 rounded-lg w-full max-w-lg">
+        <div className="font-medium mb-2">Ciclo do Semáforo:</div>
+        <ol className="list-decimal ml-5 text-sm">
+          <li>O semáforo inicia aberto para pedestres (verde)</li>
+          <li>Após 30 segundos, muda para amarelo e depois fecha para pedestres</li>
+          <li>Abre o semáforo para carros (verde)</li>
+          <li>Por 20 segundos os sensores ficam desativados (intervalo obrigatório)</li>
+          <li>Após esse intervalo, os sensores são reativados</li>
+          <li>Quando um pedestre é detectado, o semáforo muda para amarelo e reabre para pedestres</li>
+          <li>O ciclo se repete</li>
+        </ol>
+      </div>
+    </div>
+  );
+}

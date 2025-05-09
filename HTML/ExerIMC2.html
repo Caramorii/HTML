@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de IMC</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef;
+      margin: 40px;
+    }
+
+    label, input, select, button {
+      display: block;
+      margin-top: 10px;
+      width: 250px;
+    }
+ 
+    button {
+      padding: 10px;
+      margin-top: 15px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    input.somente-leitura  {
+      background-color: #eee;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Calculadora de IMC</h2>
+
+<form >
+  <label for="peso">Peso (kg):</label>
+  <input type="number" id="peso" step="0.1" placeholder="Ex: 70">
+
+  <label for="altura">Altura (m):</label>
+  <input type="number" id="altura" step="0.01" placeholder="Ex: 1.75">
+
+  <label for="genero">Gênero:</label>
+  <select id="genero">
+    <option value="masculino">Homem</option>
+    <option value="feminino">Mulher</option>
+  </select>
+
+  <button type="button" onclick="calcularIMC()">Calcular IMC</button>
+
+  <label for="resultado">Resultado do IMC:</label>
+  <input type="text" id="resultado" class="somente-leitura"  readonly>
+</form>
+
+<script>
+  function calcularIMC() {
+    const peso = parseFloat(document.getElementById("peso").value); //transforma o "peso" em numero com parseFloat, já que .value pega em string 
+    const altura = parseFloat(document.getElementById("altura").value);
+    const genero = document.getElementById("genero").value;
+
+    if (isNaN(peso) || isNaN(altura) || altura <= 0) { // esta verificando se é numero ou texto, caso não for numero aparece a mensagem abaixo de erro
+      alert("Preencha corretamente peso e altura.");   // isNaN(is not a number) a || é o "OU"
+      return;
+    }
+
+    const imc = peso / (altura * altura);
+    let classificacao = "";
+
+    if (genero === "masculino") {
+      if (imc < 20) classificacao = "Abaixo do peso";
+      else if (imc < 25) classificacao = "Peso ideal";
+      else if (imc < 30) classificacao = "Sobrepeso";
+      else classificacao = "Obesidade";
+    } else if (genero === "feminino") {
+      if (imc < 19) classificacao = "Abaixo do peso";
+      else if (imc < 24) classificacao = "Peso ideal";
+      else if (imc < 29) classificacao = "Sobrepeso";
+      else classificacao = "Obesidade";
+    }
+
+    document.getElementById("resultado").value = `IMC: ${imc.toFixed(2)} (${classificacao})`; /*concatena o resultado tranformando imc com 2 casas decimais
+                                                                                             o dollar $ e o { é para mostraro valor e concatenar */ 
+  }
+</script>
+
+</body>
+</html>
