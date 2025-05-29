@@ -7,9 +7,9 @@ console.log("Valor de a: ", a)
 //a="Teste" Erro. a constante não pode ser alterado
 //console.log("Novo valor de a: ", a)
 
-const vetor=[1,10.4,5,3.2,10]
+const vetor = [1, 10.4, 5, 3.2, 10]
 console.log(vetor)
-vetor[1]=56
+vetor[1] = 56
 console.log(vetor)
 
 // objeto
@@ -20,5 +20,3 @@ const produto = {
 }
 
 console.log(produto)
-
-produto.preco=11.99

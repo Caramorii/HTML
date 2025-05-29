@@ -4,3 +4,7 @@ let a = Number.MAX_SAFE_INTEGER
 console.log("Maior inteiro a ser representado: ", a)
 a = Number.MIN_SAFE_INTEGER
 console.log("Menor numero inteiro: ", a)
+a = Number.max_number
+console.log("Maior numero: ", a)
+a = Number.min_number
+console.log("Menor numero: ", a)
